@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from services.transcript import get_transcript
 
 app = FastAPI(
     title="YouTube Summarizer API",
@@ -13,3 +14,13 @@ def home():
 @app.get("/health")
 def health_check():
     return {"status": "healthy"}
+
+
+@app.get("/test-transcript")
+def test_transcript(url: str):
+    """
+    Test endpoint to verify transcript extraction.
+    Try it with any YouTube URL.
+    """
+    result = get_transcript(url)
+    return result
