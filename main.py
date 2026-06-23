@@ -1,5 +1,9 @@
 from fastapi import FastAPI
-from services.transcript import get_transcript
+from routes.summarize import router as summarize_router
+from database import engine , Base
+import models
+
+Base.metadata.create_all(bind=engine)
 
 app = FastAPI(
     title="YouTube Summarizer API",
@@ -7,20 +11,5 @@ app = FastAPI(
     version="1.0.0"
 )
 
-@app.get("/")
-def home():
-    return {"message": "YouTube Summarizer API is running!"}
+app.include_router(summarize_router)
 
-@app.get("/health")
-def health_check():
-    return {"status": "healthy"}
-
-
-@app.get("/test-transcript")
-def test_transcript(url: str):
-    """
-    Test endpoint to verify transcript extraction.
-    Try it with any YouTube URL.
-    """
-    result = get_transcript(url)
-    return result

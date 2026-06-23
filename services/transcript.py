@@ -3,6 +3,8 @@ from youtube_transcript_api._errors import TranscriptsDisabled, NoTranscriptFoun
 import re
 
 
+
+
 def extract_video_id(youtube_url: str) -> str:
     """
     Extracts video ID from any YouTube URL format.
@@ -23,6 +25,9 @@ def extract_video_id(youtube_url: str) -> str:
             return match.group(1)
 
     return None
+
+
+
 
 
 def get_transcript(youtube_url: str) -> dict:
