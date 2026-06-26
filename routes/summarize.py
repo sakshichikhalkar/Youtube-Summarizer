@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 from services.transcript import get_transcript
-from services.summarizer import get_summary
+from services.summarize import get_summary
 from database import get_db
 from models import Summary
 
@@ -56,4 +56,52 @@ def summarize_video(url: str, summary_type: str = "medium", db: Session = Depend
         "summary_type": summary_type,
         "source": "AI (newly generated)"
     }
-        
+
+
+@router.get("/history")
+def get_history(limit: int = 10, db: Session = Depends(get_db)):
+    """
+    Returns the most recent summaries, newest first.
+    """
+    
+    summaries = db.query(Summary).order_by(Summary.created_at.desc()).limit(limit).all()
+    
+    return {
+        "count": len(summaries),
+        "results": [
+            {
+                "id": s.id,
+                "video_id": s.video_id,
+                "youtube_url": s.youtube_url,
+                "summary": s.summary_text,
+                "summary_type": s.summary_type,
+                "created_at": s.created_at
+            }
+            for s in summaries
+        ]
+    }
+
+
+
+
+@router.delete("/summary/{summary_id}")
+def delete_summary(summary_id: int, db: Session = Depends(get_db)):
+    """
+    Deletes a specific summary by its ID.
+    """
+    
+    summary = db.query(Summary).filter(Summary.id == summary_id).first()
+    
+    if not summary:
+        return {
+            "success": False,
+            "error": f"No summary found with id {summary_id}"
+        }
+    
+    db.delete(summary)
+    db.commit()
+    
+    return {
+        "success": True,
+        "message": f"Summary with id {summary_id} deleted successfully"
+    }        
