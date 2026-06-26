@@ -1,15 +1,20 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Request
 from sqlalchemy.orm import Session
 from services.transcript import get_transcript
 from services.summarize import get_summary
 from database import get_db
 from models import Summary
+from slowapi import Limiter
+from slowapi.util import get_remote_address
+
+limiter = Limiter(key_func=get_remote_address)
 
 router = APIRouter()
 
 
 @router.get("/summarize")
-def summarize_video(url: str, summary_type: str = "medium", db: Session = Depends(get_db)):
+@limiter.limit("5/minute")
+def summarize_video(request: Request, url: str, summary_type: str = "medium", db: Session = Depends(get_db)):
     """
     Takes a YouTube URL, fetches transcript, 
     returns AI-generated summary, saves it to database.
