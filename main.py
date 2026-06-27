@@ -10,6 +10,8 @@ from slowapi import Limiter, _rate_limit_exceeded_handler #to add limits a user 
 from slowapi.util import get_remote_address
 from slowapi.errors import RateLimitExceeded
 
+from fastapi.middleware.cors import CORSMiddleware #cors security 
+
 limiter = Limiter(key_func=get_remote_address)
 
 
@@ -22,6 +24,15 @@ app = FastAPI(
     description="Summarizes YouTube videos using AI",
     version="1.0.0"
 )
+
+app.add_middleware(  # NEW
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 
 app.state.limiter = limiter #connecting limiter to your app
 app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
