@@ -2,11 +2,20 @@
 <html>
 <head>
   <title>YouTube Summarizer</title>
+  <link rel="stylesheet" href="popup.css">
 </head>
 <body>
   <h2>YouTube Summarizer</h2>
+
+  <select id="summaryType">
+    <option value="short">Short</option>
+    <option value="medium" selected>Medium</option>
+    <option value="detailed">Detailed</option>
+  </select>
+
   <button id="summarizeBtn">Summarize</button>
-  <p id="result"></p>
+
+  <div id="result"></div>
 
   <script src="popup.js"></script>
 </body>
