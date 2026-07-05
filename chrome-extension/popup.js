@@ -15,7 +15,7 @@ button.addEventListener("click", function() {
       return;
     }
 
-    fetch(`http://localhost:8000/summarize?url=${encodeURIComponent(currentUrl)}&summary_type=${selectedType}`)
+    fetch(`http://youtube-summarizer-api-production-28a9.up.railway.app/summarize?url=${encodeURIComponent(currentUrl)}&summary_type=${selectedType}`)
       .then(response => response.json())
       .then(data => {
         if (data.error) {
